@@ -20,7 +20,7 @@ function Create(options) {
   this.onInvoke = () => {if (options.debug) console.log("BotBuilder-CiscoSpark > onInvoke", arguments)};
   
   // Text-only Messages reception
-  bot.on("messages", function (bot, message, id) {
+  bot.on("message", function (bot, message, id) {
     if (message.email === options.name || !message.files) return;
     if (options.debug) console.log("BotBuilder-CiscoSpark > New text message", message);
 		this.handler([{
