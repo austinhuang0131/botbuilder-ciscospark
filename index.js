@@ -23,7 +23,7 @@ function Create(options) {
   bot.on("message", function (bot, message, id) {
     if (message.email === options.name || message.files) return;
     if (options.debug) console.log("BotBuilder-CiscoSpark > New text message", message);
-	  let msg = {
+	  var msg = {
 		timestamp: Date.parse(message.created),
 		source: "ciscospark",
 		entities: [],
@@ -31,7 +31,7 @@ function Create(options) {
 		address: {
 				bot: { name: options.name, id: bot.person.id },
 				user: { name: message.personEmail, id: message.personId },
-				channelId: "ciscospark",
+				channelId: "directline",
 				channelName: "ciscospark",
 				msg: message,
 				conversation: {
@@ -48,7 +48,7 @@ function Create(options) {
   bot.on("files", function (bot, message, id) {
     if (message.email === options.name) return;
     if (options.debug) console.log("BotBuilder-CiscoSpark > New file message", message);
-		let msg = {
+		var msg = {
 			timestamp: Date.parse(message.created),
 			source: "ciscospark",
 			entities: [],
@@ -57,7 +57,7 @@ function Create(options) {
 			address: {
 				bot: { name: options.name, id: bot.person.id },
 				user: { name: message.personEmail, id: message.personId },
-				channelId: "ciscospark",
+				channelId: "directline",
 				channelName: "ciscospark",
 				msg: message,
 				conversation: {
