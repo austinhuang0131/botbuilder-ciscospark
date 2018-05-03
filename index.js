@@ -21,7 +21,7 @@ function Create(options) {
   
   // Text-only Messages reception
   bot.on("message", function (bot, message, id) {
-    if (message.email === options.name || !message.files) return;
+    if (message.email === options.name || message.files) return;
     if (options.debug) console.log("BotBuilder-CiscoSpark > New text message", message);
 		this.handler([{
 			timestamp: Date.parse(message.created),
