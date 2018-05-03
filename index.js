@@ -19,7 +19,7 @@ function Create(options) {
     messageFormat: "markdown"
   });
   bot.start();
-  this.onEvent = handler => {this.handler = handler};
+  this.onEvent = handler => this.handler = handler;
   this.startConversation = () => {
     if (options.debug)
       console.log("BotBuilder-CiscoSpark > startConversation", arguments);
