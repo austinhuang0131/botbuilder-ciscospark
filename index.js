@@ -23,29 +23,31 @@ function Create(options) {
   bot.on("message", function (bot, message, id) {
     if (message.email === options.name || message.files) return;
     if (options.debug) console.log("BotBuilder-CiscoSpark > New text message", message);
-		this.handler([{
-			timestamp: Date.parse(message.created),
-			source: "ciscospark",
-			entities: [],
-			text: message.text.replace(/^ /, ""),
-			address: {
-					bot: { name: options.name, id: bot.person.id },
-					user: { name: message.personEmail, id: message.personId },
-					channelId: "ciscospark",
-					channelName: "ciscospark",
-					msg: message,
-					conversation: {
-						id: message.roomId,
-						isGroup: message.roomType === "group" ? true : false
-					}
-			}
-		}]);
+	  let msg = {
+		timestamp: Date.parse(message.created),
+		source: "ciscospark",
+		entities: [],
+		text: message.text.replace(/^ /, ""),
+		address: {
+				bot: { name: options.name, id: bot.person.id },
+				user: { name: message.personEmail, id: message.personId },
+				channelId: "ciscospark",
+				channelName: "ciscospark",
+				msg: message,
+				conversation: {
+					id: message.roomId,
+					isGroup: message.roomType === "group" ? true : false
+				}
+		}
+	};
+	this.handler([msg]);
+	if (options.debug) console.log("BotBuilder-CiscoSpark > Processed text message", msg);
   });
   
   // Messages w/ att reception
   bot.on("files", function (bot, message, id) {
     if (message.email === options.name) return;
-    if (options.debug) console.log("BotBuilder-CiscoSpark > New text message", message);
+    if (options.debug) console.log("BotBuilder-CiscoSpark > New file message", message);
 		let msg = {
 			timestamp: Date.parse(message.created),
 			source: "ciscospark",
@@ -65,7 +67,7 @@ function Create(options) {
 			}
 		};
 		this.handler([msg]);
-    if (options.debug) console.log("BotBuilder-CiscoSpark > Processed text message", msg);
+    if (options.debug) console.log("BotBuilder-CiscoSpark > Processed file message", msg);
   });
   
   // Message dispatching
