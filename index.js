@@ -46,43 +46,42 @@ function Create(options) {
   bot.on("files", function (bot, message, id) {
     if (message.email === options.name) return;
     if (options.debug) console.log("BotBuilder-CiscoSpark > New text message", message);
-		this.handler([{
+		let msg = {
 			timestamp: Date.parse(message.created),
 			source: "ciscospark",
 			entities: [],
 			text: !message.text ? null : message.text.replace(/^ /, ""),
 			attachments: message.files.map(f => {return {content: f.binary, contentType: f.type}}),
 			address: {
-					bot: { name: options.name, id: bot.person.id },
-					user: { name: message.personEmail, id: message.personId },
-					channelId: "ciscospark",
-					channelName: "ciscospark",
-					msg: message,
-					conversation: {
-						id: message.roomId,
-						isGroup: message.roomType === "group" ? true : false
-					}
+				bot: { name: options.name, id: bot.person.id },
+				user: { name: message.personEmail, id: message.personId },
+				channelId: "ciscospark",
+				channelName: "ciscospark",
+				msg: message,
+				conversation: {
+					id: message.roomId,
+					isGroup: message.roomType === "group" ? true : false
+				}
 			}
-		}]);
+		};
+		this.handler([msg]);
+    if (options.debug) console.log("BotBuilder-CiscoSpark > Processed text message", msg);
   });
   
   // Message dispatching
   this.send = function(messages, cb) {
-    if (options.debug)
-      console.log(
-        "BotBuilder-CiscoSpark > Sending messages... " + JSON.stringify(messages)
-      );
-      var body = [];
-      messages.map(msg => {
-        if (!msg.attachments) body.push({roomId: msg.address.conversation.id, text: msg.text});
-        else if (msg.attachments.length === 1) body.push({roomId: msg.address.conversation.id, text: msg.text, file: msg.attachments[0].contentUrl});
-        else console.error("BotBuilder-CiscoSpark > ERROR: You CANNOT send more than 1 attachment in a message.");
-      });
-      if (body.length !== 0) body.map(m => bot.say(m.roomId, m.text, m.file));
+		if (options.debug) console.log("BotBuilder-CiscoSpark > Sending messages... " + messages);
+		var body = [];
+		messages.map(msg => {
+			if (!msg.attachments) body.push({roomId: msg.address.conversation.id, text: msg.text});
+			else if (msg.attachments.length === 1) body.push({roomId: msg.address.conversation.id, text: msg.text, file: msg.attachments[0].contentUrl});
+			else console.error("BotBuilder-CiscoSpark > ERROR: You CANNOT send more than 1 attachment in a message.");
+		});
+		if (body.length !== 0) body.map(m => bot.say(m.roomId, m.text, m.file));
   };
 	
 	// Listener
-	this.listen = require('node-flint/webhook')(bot);
+this.listen = require('node-flint/webhook')(bot);
   return this;
 }
 
