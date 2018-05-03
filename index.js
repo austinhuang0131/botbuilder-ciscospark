@@ -1,35 +1,32 @@
-/*
-		config = {
-			port 			: process.env.OVERRIDE_PORT || process.env.PORT,
-			path			: process.env.WEBHOOK_PATH,
-			token			: process.env.SPARK_TOKEN,
-			secret			: process.env.WEBHOOK_SECRET
-		};
-    also we need to ask for bot username ending with @sparkbot.io
-*/
-
-const SparkBot = require("node-sparkbot"),
-bot = new SparkBot(),
-SparkAPIWrapper = require("node-sparkclient"),
-spark = new SparkAPIWrapper(process.env.SPARK_TOKEN);
+const Flint = require("node-flint");
 
 function Create(options) {
   // Option check
   if (!options.name) throw "BotBuilder-CiscoSpark > Name argument (username@sparkbot.io) not defined.";
-  
+  if (!options.token) throw "BotBuilder-CiscoSpark > Token argument not defined.";
+  if (!options.webhookUrl) throw "BotBuilder-CiscoSpark > Webhook URL argument not defined.";
+  if (!options.port) throw "BotBuilder-CiscoSpark > Webhook port argument not defined.";
+
   // Define random stuff
+	var bot = new Flint({
+		token: options.token,
+		webhookUrl: options.webhookUrl,
+		port: options.port,
+		messageFormat: "markdown"
+	});
+	bot.start();
   this.onEvent = (handler) => this.handler = handler;
   this.startConversation = () => {if (options.debug) console.log("BotBuilder-CiscoSpark > startConversation", arguments)};
   this.onInvoke = () => {if (options.debug) console.log("BotBuilder-CiscoSpark > onInvoke", arguments)};
   
   // Message reception
-  bot.onEvent("messages", "created", function (trigger) {
+  bot.on("messages", function (bot, trigger, id) {
     if (trigger.personEmail === options.name) return;
     if (options.debug) console.log("BotBuilder-CiscoSpark > New message", trigger);
     bot.decryptMessage(trigger, function (err, message) {
       let temp = [];
       if (message.files) message.files.forEach(m => {
-        spark.getFile(m, function (err, fileInfo, fileData) {
+        bot.getFiles(m, function (err, fileInfo, fileData) {
           temp.push({
             contentType: fileInfo.contentType,
             content: fileData,
@@ -70,8 +67,11 @@ function Create(options) {
         else if (msg.attachments.length === 1) body.push({roomId: msg.address.conversation.id, text: msg.text, file: msg.attachments[0].contentUrl});
         else console.error("BotBuilder-CiscoSpark > ERROR: You CANNOT send more than 1 attachment in a message.");
       });
-      body.map(m => spark.createMessage(m.roomId, m.text, m.file));
+      if (body.length !== 0) body.map(m => bot.say(m.roomId, m.text, m.file));
   };
+	
+	// Listener
+	this.listen = require('node-flint/webhook')(bot);
   return this;
 }
 
