@@ -1,0 +1,25 @@
+{
+  "name": "botbuilder-ciscospark",
+  "version": "0.0.1",
+  "description": "Microsoft BotBuilder Connector to Cisco Spark.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "node-sparkbot": "^0.12.0",
+    "node-sparkclient": "^0.1.4"
+  },
+  "engines": {
+    "node": "8.x"
+  },
+  "repository": {
+    "url": ""
+  },
+  "license": "MIT",
+  "keywords": [
+    "botbuilder",
+    "ciscospark",
+    "chatbot"
+  ]
+}
