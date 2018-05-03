@@ -19,40 +19,51 @@ function Create(options) {
   this.startConversation = () => {if (options.debug) console.log("BotBuilder-CiscoSpark > startConversation", arguments)};
   this.onInvoke = () => {if (options.debug) console.log("BotBuilder-CiscoSpark > onInvoke", arguments)};
   
-  // Message reception
-  bot.on("messages", function (bot, trigger, id) {
-    if (trigger.personEmail === options.name) return;
-    if (options.debug) console.log("BotBuilder-CiscoSpark > New message", trigger);
-    bot.decryptMessage(trigger, function (err, message) {
-      let temp = [];
-      if (message.files) message.files.forEach(m => {
-        bot.getFiles(m, function (err, fileInfo, fileData) {
-          temp.push({
-            contentType: fileInfo.contentType,
-            content: fileData,
-            name: fileInfo.fileName
-          });
-        });
-      });
-      this.handler([{
-        timestamp: Date.parse(message.created),
-        source: "ciscospark",
-        entities: [],
-        attachments: temp.length === 0 ? null : temp,
-        text: !message.text ? null : message.text.replace(/^ /, ""), // First space always escape
-        address: {
-            bot: { name: options.name, id: "too lazy to extract it" },
-            user: { name: message.personEmail, id: message.personId },
-            channelId: "ciscospark",
-            channelName: "ciscospark",
-            msg: message,
-            conversation: {
-              id: message.roomId,
-              isGroup: message.roomType === "group" ? true : false
-            }
-        }
-      }]);
-    });
+  // Text-only Messages reception
+  bot.on("messages", function (bot, message, id) {
+    if (message.email === options.name || !message.files) return;
+    if (options.debug) console.log("BotBuilder-CiscoSpark > New text message", message);
+		this.handler([{
+			timestamp: Date.parse(message.created),
+			source: "ciscospark",
+			entities: [],
+			text: message.text.replace(/^ /, ""),
+			address: {
+					bot: { name: options.name, id: bot.person.id },
+					user: { name: message.personEmail, id: message.personId },
+					channelId: "ciscospark",
+					channelName: "ciscospark",
+					msg: message,
+					conversation: {
+						id: message.roomId,
+						isGroup: message.roomType === "group" ? true : false
+					}
+			}
+		}]);
+  });
+  
+  // Messages w/ att reception
+  bot.on("files", function (bot, message, id) {
+    if (message.email === options.name) return;
+    if (options.debug) console.log("BotBuilder-CiscoSpark > New text message", message);
+		this.handler([{
+			timestamp: Date.parse(message.created),
+			source: "ciscospark",
+			entities: [],
+			text: !message.text ? null : message.text.replace(/^ /, ""),
+			attachments: message.files.map(f => {return {content: f.binary, contentType: f.type}}),
+			address: {
+					bot: { name: options.name, id: bot.person.id },
+					user: { name: message.personEmail, id: message.personId },
+					channelId: "ciscospark",
+					channelName: "ciscospark",
+					msg: message,
+					conversation: {
+						id: message.roomId,
+						isGroup: message.roomType === "group" ? true : false
+					}
+			}
+		}]);
   });
   
   // Message dispatching
