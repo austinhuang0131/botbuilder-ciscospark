@@ -9,13 +9,14 @@
   "dependencies": {
     "express": "^4.16.3",
     "snekfetch": "^4.0.0",
-    "body-parser": "^1.18.2"
+    "body-parser": "^1.18.2",
+    "buffer-type": "^0.0.2"
   },
   "engines": {
     "node": "8.x"
   },
   "repository": {
-    "url": ""
+    "url": "https://github.com/austinhuang0131/botbuilder-ciscospark"
   },
   "license": "MIT",
   "keywords": [
