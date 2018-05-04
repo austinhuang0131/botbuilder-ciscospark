@@ -24,7 +24,7 @@ function Create(options) {
   };
 
   // Reception
-  this.processMessage = (message) => {
+  this.processCiscoMessage = (message) => {
     if (message.data.personEmail !== options.name) snekfetch.get("https://api.ciscospark.com/v1/messages/"+message.data.id)
     .set(`Authorization`, "Bearer " + options.token)
     .then(r => {
@@ -91,7 +91,7 @@ function Create(options) {
     if (req.path === options.path) {
       if (options.debug) console.log("BotBuilder-CiscoSpark > Message received", req.body);
       res.send("ok");
-      return this.processMessage(req.body);
+      return this.processCiscoMessage(req.body);
     }
   };
   return this;
