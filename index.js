@@ -23,7 +23,7 @@ function Create(options) {
   };
 
   // Message dispatching
-  this.send = function(messages, cb) {
+  this.prototype.send = function(messages, cb) {
     if (messages.filter(m => m.source === "ciscospark").length !== messages.length)
       return Promise.reject(
         "BotBuilder-CiscoSpark > Ignoring messages for other platforms..." +
