@@ -29,7 +29,7 @@ function Create(options) {
     .set(`Authorization`, "Bearer " + options.token)
     .then(r => {
       var msg = {
-        timestamp: Date.parse(message.created),
+        timestamp: Date.parse(r.created),
         source: "ciscospark",
         entities: [],
         text: !r.body.text ? null : r.body.text.replace(/^ /, ""),
@@ -40,13 +40,13 @@ function Create(options) {
         }),
         address: {
           bot: { name: options.name, id: "placeholder" },
-          user: { name: message.personEmail, id: message.roomId },
+          user: { name: r.body.personEmail, id: r.body.personId },
           channelId: "cisco",
           channelName: "ciscospark",
-          msg: message,
+          msg: r,
           conversation: {
-            id: message.roomId,
-            isGroup: message.roomType === "group" ? true : false
+            id: r.body.roomId,
+            isGroup: r.body.roomType === "group" ? true : false
           }
         }
       };
@@ -68,12 +68,12 @@ function Create(options) {
             "BotBuilder-CiscoSpark > WARNING: You CANNOT send more than 1 attachment in a message, despite being able to receive so."
           );
         body.push({
-          roomId: msg.address.user.id,
+          roomId: msg.address.conversation.id,
           markdown: msg.text,
           files: [msg.attachments[0].contentUrl]
         });
       }
-      else body.push({ roomId: msg.address.user.id, markdown: msg.text });
+      else body.push({ roomId: msg.address.conversation.id, markdown: msg.text });
     });
     if (options.debug)
       console.log("BotBuilder-CiscoSpark > Messages ready to go... " + JSON.stringify(body));
