@@ -23,7 +23,12 @@ function Create(options) {
   };
 
   // Message dispatching
-  this.ciscoSend = function(messages, cb) {
+  this.send = function(messages, cb) {
+    if (messages.filter(m => m.address.source === "line").length !== messages.length)
+      return Promise.reject(
+        "BotBuilder-Line > Ignoring messages for other platforms..." +
+          JSON.stringify(messages)
+      );
     if (options.debug)
       console.log("BotBuilder-CiscoSpark > Preparing messages to go... " + messages);
     var body = [];
