@@ -88,9 +88,11 @@ function Create(options) {
 
   // Listener
   this.hears = (req, res) => {
-    if (req.path !== options.path) return;
-    if (options.debug) console.log("BotBuilder-CiscoSpark > Message received", req.body);
-    return this.processMessage(req.body);
+    if (req.path === options.path) {
+      if (options.debug) console.log("BotBuilder-CiscoSpark > Message received", req.body);
+      res.send("ok");
+      return this.processMessage(req.body);
+    }
   };
   return this;
 }
