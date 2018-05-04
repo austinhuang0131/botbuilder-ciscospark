@@ -59,7 +59,7 @@ function Create(options) {
   // Message dispatching
   this.send = function(messages, cb) {
     if (options.debug)
-      console.log("BotBuilder-CiscoSpark > Sending messages... " + messages);
+      console.log("BotBuilder-CiscoSpark > Preparing messages to go... " + messages);
     var body = [];
     messages.map(msg => {
       if (!msg.attachments)
@@ -67,7 +67,7 @@ function Create(options) {
       else if (msg.attachments.length === 1)
         body.push({
           roomId: msg.address.conversation.id,
-          markdown: msg.text,
+          text: msg.text,
           files: [msg.attachments[0].contentUrl]
         });
       else
@@ -75,7 +75,9 @@ function Create(options) {
           "BotBuilder-CiscoSpark > ERROR: You CANNOT send more than 1 attachment in a message."
         );
     });
-    if (body.length !== 0) body.forEach(b => {
+    if (options.debug)
+      console.log("BotBuilder-CiscoSpark > Messages ready to go... " + body);
+    if (body.length !== 0) body.map(b => {
       snekfetch.post("https://api.ciscospark.com/v1/messages")
       .set(`Authorization`, "Bearer " + options.token)
       .send(b);
