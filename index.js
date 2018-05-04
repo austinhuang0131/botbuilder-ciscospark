@@ -40,7 +40,7 @@ function Create(options) {
         }),
         address: {
           bot: { name: options.name, id: "placeholder" },
-          user: { name: message.personEmail, id: message.personId },
+          user: { name: message.personEmail, id: message.roomId },
           channelId: "cisco",
           channelName: "ciscospark",
           msg: message,
@@ -68,12 +68,12 @@ function Create(options) {
             "BotBuilder-CiscoSpark > WARNING: You CANNOT send more than 1 attachment in a message, despite being able to receive so."
           );
         body.push({
-          roomId: msg.address.conversation.id,
-          text: msg.text,
+          roomId: msg.address.user.id,
+          markdown: msg.text,
           files: [msg.attachments[0].contentUrl]
         });
       }
-      else body.push({ roomId: msg.address.conversation.id, markdown: msg.text });
+      else body.push({ roomId: msg.address.user.id, markdown: msg.text });
     });
     if (options.debug)
       console.log("BotBuilder-CiscoSpark > Messages ready to go... " + JSON.stringify(body));
