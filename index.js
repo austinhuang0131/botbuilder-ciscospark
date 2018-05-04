@@ -25,35 +25,35 @@ function Create(options) {
 
   // Reception
   this.processMessage = (message) => {
-    var msg = {
-      timestamp: Date.parse(message.created),
-      source: "ciscospark",
-      entities: [],
-      address: {
-        bot: { name: options.name, id: "placeholder" },
-        user: { name: message.personEmail, id: message.personId },
-        channelId: "ciscospark",
-        channelName: "ciscospark",
-        msg: message,
-        conversation: {
-          id: message.roomId,
-          isGroup: message.roomType === "group" ? true : false
-        }
-      }
-    };
     snekfetch.get("https://api.ciscospark.com/v1/messages/"+message.id)
     .set(`Authorization`, "Bearer " + options.token)
     .then(r => {
-      msg.text = !r.body.text ? null : r.body.text.replace(/^ /, "");
-      if (r.body.files) msg.attachments = r.body.files.map(f => {
-        snekfetch.get(f)
-        .set(`Authorization`, "Bearer " + options.token)
-        .then(a => {return {content: a.body, contentType: require("buffer-type")(a.body).type}});
-      });
+      var msg = {
+        timestamp: Date.parse(message.created),
+        source: "ciscospark",
+        entities: [],
+        text: !r.body.text ? null : r.body.text.replace(/^ /, ""),
+        attachments: r.body.files === false ? [] : r.body.files.map(f => {
+          snekfetch.get(f)
+          .set(`Authorization`, "Bearer " + options.token)
+          .then(a => {return {content: a.body, contentType: require("buffer-type")(a.body).type}});
+        }),
+        address: {
+          bot: { name: options.name, id: "placeholder" },
+          user: { name: message.personEmail, id: message.personId },
+          channelId: "ciscospark",
+          channelName: "ciscospark",
+          msg: message,
+          conversation: {
+            id: message.roomId,
+            isGroup: message.roomType === "group" ? true : false
+          }
+        }
+      };
+      this.handler([msg]);
+      if (options.debug)
+        console.log("BotBuilder-CiscoSpark > Processed message", msg);
     });
-    this.handler([msg]);
-    if (options.debug)
-      console.log("BotBuilder-CiscoSpark > Processed message", msg);
   }
 
   // Message dispatching
