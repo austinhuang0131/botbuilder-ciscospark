@@ -33,7 +33,7 @@ function Create(options) {
         source: "ciscospark",
         entities: [],
         text: !r.body.text ? null : r.body.text.replace(/^ /, ""),
-        attachments: r.body.files === false ? [] : r.body.files.map(f => {
+        attachments: !r.body.files ? [] : r.body.files.map(f => {
           snekfetch.get(f)
           .set(`Authorization`, "Bearer " + options.token)
           .then(a => {return {content: a.body, contentType: require("buffer-type")(a.body).type}});
