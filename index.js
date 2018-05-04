@@ -86,7 +86,7 @@ function Create(options) {
   this.listen = (req, res) => {
     if (options.debug) console.log("BotBuilder-CiscoSpark > Message received", req.body);
     return this.processMessage(req.body);
-  });
+  };
   return this;
 }
 
