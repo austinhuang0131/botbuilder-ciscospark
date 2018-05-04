@@ -23,7 +23,7 @@ function Create(options) {
   };
 
   // Message dispatching
-  this.send = function(messages, cb) {
+  this.ciscoSend = function(messages, cb) {
     if (options.debug)
       console.log("BotBuilder-CiscoSpark > Preparing messages to go... " + messages);
     var body = [];
