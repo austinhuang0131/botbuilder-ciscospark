@@ -42,12 +42,12 @@ function Create(options) {
       }
     };
     snekfetch.get("https://api.ciscospark.com/v1/messages/"+message.id)
-    .set(`Authorization`, "Bearer" + options.token)
+    .set(`Authorization`, "Bearer " + options.token)
     .then(r => {
       msg.text = !r.body.text ? null : r.body.text.replace(/^ /, "");
       if (r.body.files) msg.attachments = r.body.files.map(f => {
         snekfetch.get(f)
-        .set(`Authorization`, "Bearer" + options.token)
+        .set(`Authorization`, "Bearer " + options.token)
         .then(a => {return {content: a.body, contentType: require("buffer-type")(a.body).type}});
       });
     });
@@ -77,7 +77,7 @@ function Create(options) {
     });
     if (body.length !== 0) body.forEach(b => {
       snekfetch.post("https://api.ciscospark.com/v1/messages")
-      .set(`Authorization`, "Bearer" + options.token)
+      .set(`Authorization`, "Bearer " + options.token)
       .send(b);
     });
   };
