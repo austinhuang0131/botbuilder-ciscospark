@@ -1,6 +1,6 @@
 const snekfetch = require("snekfetch");
 
-function Create(options) {
+var Create = function(options) {
   // Option check
   if (!options.name)
     throw "BotBuilder-CiscoSpark > Name argument (username@sparkbot.io) not defined.";
@@ -21,42 +21,7 @@ function Create(options) {
     if (options.debug)
       console.log("BotBuilder-CiscoSpark > onInvoke", arguments);
   };
-
-  // Message dispatching
-  this.prototype.send = function(messages, cb) {
-    if (messages.filter(m => m.source === "ciscospark").length !== messages.length)
-      return Promise.reject(
-        "BotBuilder-CiscoSpark > Ignoring messages for other platforms..." +
-          JSON.stringify(messages)
-      );
-    if (options.debug)
-      console.log("BotBuilder-CiscoSpark > Preparing messages to go... " + messages);
-    var body = [];
-    messages.map(msg => {
-      if (msg.attachments) {
-        if (msg.attachments.length > 1)
-          console.warn(
-            "BotBuilder-CiscoSpark > WARNING: You CANNOT send more than 1 attachment in a message, despite being able to receive so."
-          );
-        body.push({
-          roomId: msg.address.conversation.id,
-          markdown: msg.text,
-          files: [msg.attachments[0].contentUrl]
-        });
-      }
-      else body.push({ roomId: msg.address.conversation.id, markdown: msg.text });
-    });
-    if (options.debug)
-      console.log("BotBuilder-CiscoSpark > Messages ready to go... " + JSON.stringify(body));
-    if (body.length !== 0) body.forEach(b => {
-      snekfetch.post("https://api.ciscospark.com/v1/messages")
-      .set(`Authorization`, "Bearer " + options.token)
-      .set(`Content-Type`, "application/json")
-      .send(b)
-      .then(r => {if (options.debug) console.log("BotBuilder-CiscoSpark > Here it goes... ", r.body);});
-    });
-  };
-
+  
   // Listener
   this.hears = (req, res) => {
     if (req.path === options.path) {
@@ -97,4 +62,40 @@ function Create(options) {
   return this;
 }
 
-module.exports = Create;
+  // Message dispatching
+  Create.prototype.send = function(messages, cb) {
+    if (messages.filter(m => m.source === "ciscospark").length !== messages.length)
+      return Promise.reject(
+        "BotBuilder-CiscoSpark > Ignoring messages for other platforms..." +
+          JSON.stringify(messages)
+      );
+    if (options.debug)
+      console.log("BotBuilder-CiscoSpark > Preparing messages to go... " + messages);
+    var body = [];
+    messages.map(msg => {
+      if (msg.attachments) {
+        if (msg.attachments.length > 1)
+          console.warn(
+            "BotBuilder-CiscoSpark > WARNING: You CANNOT send more than 1 attachment in a message, despite being able to receive so."
+          );
+        body.push({
+          roomId: msg.address.conversation.id,
+          markdown: msg.text,
+          files: [msg.attachments[0].contentUrl]
+        });
+      }
+      else body.push({ roomId: msg.address.conversation.id, markdown: msg.text });
+    });
+    if (options.debug)
+      console.log("BotBuilder-CiscoSpark > Messages ready to go... " + JSON.stringify(body));
+    if (body.length !== 0) body.forEach(b => {
+      snekfetch.post("https://api.ciscospark.com/v1/messages")
+      .set(`Authorization`, "Bearer " + options.token)
+      .set(`Content-Type`, "application/json")
+      .send(b)
+      .then(r => {if (options.debug) console.log("BotBuilder-CiscoSpark > Here it goes... ", r.body);});
+    });
+  };
+
+
+exports = Create;
