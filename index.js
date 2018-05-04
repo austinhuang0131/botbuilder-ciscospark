@@ -12,7 +12,7 @@ function Create(options) {
     throw "BotBuilder-CiscoSpark > Webhook port argument not defined.";
 
   // Define random stuff
-  options = Object.assign({ channelId: channelId }, options);
+  options = Object.assign({ channelId: "directline" }, options);
   var bot = new Flint({
     token: options.token,
     webhookUrl: options.webhookUrl,
