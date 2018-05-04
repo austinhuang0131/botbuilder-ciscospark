@@ -12,7 +12,6 @@ function Create(options) {
     throw "BotBuilder-CiscoSpark > Webhook port argument not defined.";
 
   // Define random stuff
-  options = Object.assign({ channelId: "cisco" }, options);
   this.onEvent = handler => this.handler = handler;
   this.startConversation = () => {
     if (options.debug)
