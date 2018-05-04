@@ -81,7 +81,8 @@ function Create(options) {
       snekfetch.post("https://api.ciscospark.com/v1/messages")
       .set(`Authorization`, "Bearer " + options.token)
       .set(`Content-Type`, "application/json")
-      .send(b);
+      .send(b)
+      .then(r => {if (options.debug) console.log("BotBuilder-CiscoSpark > Here it goes... ", r.body);});
     });
   };
 
