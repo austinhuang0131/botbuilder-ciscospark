@@ -1,4 +1,4 @@
-const Flint = require("node-flint");
+const snekfetch = require("snekfetch");
 
 function Create(options) {
   // Option check
@@ -13,13 +13,6 @@ function Create(options) {
 
   // Define random stuff
   options = Object.assign({ channelId: "directline" }, options);
-  var bot = new Flint({
-    token: options.token,
-    webhookUrl: options.webhookUrl,
-    port: options.port,
-    messageFormat: "markdown"
-  });
-  bot.start();
   this.onEvent = handler => this.handler = handler;
   this.startConversation = () => {
     if (options.debug)
@@ -30,18 +23,14 @@ function Create(options) {
       console.log("BotBuilder-CiscoSpark > onInvoke", arguments);
   };
 
-  // Text-only Messages reception
-  bot.on("message", function(bot, message, id) {
-    if (message.email === options.name || message.files) return;
-    if (options.debug)
-      console.log("BotBuilder-CiscoSpark > New text message", message);
+  // Reception
+  this.processMessage = (message) => {
     var msg = {
       timestamp: Date.parse(message.created),
       source: "ciscospark",
       entities: [],
-      text: message.text.replace(/^ /, ""),
       address: {
-        bot: { name: options.name, id: bot.person.id },
+        bot: { name: options.name, id: "placeholder" },
         user: { name: message.personEmail, id: message.personId },
         channelId: "ciscospark",
         channelName: "ciscospark",
@@ -52,40 +41,20 @@ function Create(options) {
         }
       }
     };
+    snekfetch.get("https://api.ciscospark.com/v1/messages/"+message.id)
+    .set(`Authorization`, "Bearer" + options.token)
+    .then(r => {
+      msg.text = !r.body.text ? null : r.body.text.replace(/^ /, "");
+      if (r.body.files) msg.attachments = r.body.files.map(f => {
+        snekfetch.get(f)
+        .set(`Authorization`, "Bearer" + options.token)
+        .then(a => {return {content: a.body, contentType: require("buffer-type")(a.body).type}});
+      });
+    });
     this.handler([msg]);
     if (options.debug)
-      console.log("BotBuilder-CiscoSpark > Processed text message", msg);
-  });
-
-  // Messages w/ att reception
-  bot.on("files", function(bot, message, id) {
-    if (message.email === options.name) return;
-    if (options.debug)
-      console.log("BotBuilder-CiscoSpark > New file message", message);
-    var msg = {
-      timestamp: Date.parse(message.created),
-      source: "ciscospark",
-      entities: [],
-      text: !message.text ? null : message.text.replace(/^ /, ""),
-      attachments: message.files.map(f => {
-        return { content: f.binary, contentType: f.type };
-      }),
-      address: {
-        bot: { name: options.name, id: bot.person.id },
-        user: { name: message.personEmail, id: message.personId },
-        channelId: "ciscospark",
-        channelName: "ciscospark",
-        msg: message,
-        conversation: {
-          id: message.roomId,
-          isGroup: message.roomType === "group" ? true : false
-        }
-      }
-    };
-    this.handler([msg]);
-    if (options.debug)
-      console.log("BotBuilder-CiscoSpark > Processed file message", msg);
-  });
+      console.log("BotBuilder-CiscoSpark > Processed message", msg);
+  }
 
   // Message dispatching
   this.send = function(messages, cb) {
@@ -94,24 +63,32 @@ function Create(options) {
     var body = [];
     messages.map(msg => {
       if (!msg.attachments)
-        body.push({ roomId: msg.address.conversation.id, text: msg.text });
+        body.push({ roomId: msg.address.conversation.id, markdown: msg.text });
       else if (msg.attachments.length === 1)
         body.push({
           roomId: msg.address.conversation.id,
-          text: msg.text,
-          file: msg.attachments[0].contentUrl
+          markdown: msg.text,
+          files: [msg.attachments[0].contentUrl]
         });
       else
         console.error(
           "BotBuilder-CiscoSpark > ERROR: You CANNOT send more than 1 attachment in a message."
         );
     });
-    if (body.length !== 0) body.map(m => bot.say(m.roomId, m.text, m.file));
+    if (body.length !== 0) body.forEach(b => {
+      snekfetch.post("https://api.ciscospark.com/v1/messages")
+      .set(`Authorization`, "Bearer" + options.token)
+      .send(b);
+    });
   };
 
   // Listener
-  Object.assign(bot, options);
-  this.listen = require("node-flint/webhook")(bot);
+  this.listen = (req, res) => {
+    if (options.debug) console.log("BotBuilder-CiscoSpark > Message received", req.body);
+    return Promise.all(req.body.events.map(this.processMessage)).then(
+      result => res.sendRaw(200, "ok")
+    );
+  });
   return this;
 }
 
