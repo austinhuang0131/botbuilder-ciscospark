@@ -80,6 +80,7 @@ function Create(options) {
     if (body.length !== 0) body.forEach(b => {
       snekfetch.post("https://api.ciscospark.com/v1/messages")
       .set(`Authorization`, "Bearer " + options.token)
+      .set(`Content-Type`, "application/json")
       .send(b);
     });
   };
