@@ -77,7 +77,7 @@ function Create(options) {
     });
     if (options.debug)
       console.log("BotBuilder-CiscoSpark > Messages ready to go... " + JSON.stringify(body));
-    if (body.length !== 0) body.map(b => {
+    if (body.length !== 0) body.forEach(b => {
       snekfetch.post("https://api.ciscospark.com/v1/messages")
       .set(`Authorization`, "Bearer " + options.token)
       .send(b);
