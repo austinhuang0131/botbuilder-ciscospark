@@ -6,8 +6,8 @@ function Create(options) {
     throw "BotBuilder-CiscoSpark > Name argument (username@sparkbot.io) not defined.";
   if (!options.token)
     throw "BotBuilder-CiscoSpark > Token argument not defined.";
-  if (!options.webhookUrl)
-    throw "BotBuilder-CiscoSpark > Webhook URL argument not defined.";
+  if (!options.path)
+    throw "BotBuilder-CiscoSpark > Path argument not defined.";
   if (!options.port)
     throw "BotBuilder-CiscoSpark > Webhook port argument not defined.";
 
@@ -88,6 +88,7 @@ function Create(options) {
 
   // Listener
   this.hears = (req, res) => {
+    if (req.path !== options.path) return;
     if (options.debug) console.log("BotBuilder-CiscoSpark > Message received", req.body);
     return this.processMessage(req.body);
   };
