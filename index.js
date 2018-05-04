@@ -62,7 +62,7 @@ function Create(options) {
       console.log("BotBuilder-CiscoSpark > Preparing messages to go... " + messages);
     var body = [];
     messages.map(msg => {
-      if (msg.attachments)
+      if (msg.attachments) {
         if (msg.attachments.length > 1)
           console.warn(
             "BotBuilder-CiscoSpark > WARNING: You CANNOT send more than 1 attachment in a message, despite being able to receive so."
@@ -72,6 +72,7 @@ function Create(options) {
           text: msg.text,
           files: [msg.attachments[0].contentUrl]
         });
+      }
       else body.push({ roomId: msg.address.conversation.id, markdown: msg.text });
     });
     if (options.debug)
