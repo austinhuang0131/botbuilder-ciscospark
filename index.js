@@ -25,7 +25,7 @@ function Create(options) {
 
   // Reception
   this.processMessage = (message) => {
-    snekfetch.get("https://api.ciscospark.com/v1/messages/"+message.id)
+    snekfetch.get("https://api.ciscospark.com/v1/messages/"+message.data.id)
     .set(`Authorization`, "Bearer " + options.token)
     .then(r => {
       var msg = {
