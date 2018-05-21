@@ -12,7 +12,7 @@ var sparkConnector = function() {
       throw "BotBuilder-CiscoSpark > Webhook port argument not defined.";
     this.options = options;
   }  
-  sparkConnector.prototype.getOptions = function() {
+  sparkConnector.getOptions = function() {
     var that = this;
     var nested = function() {
       return that.options;
