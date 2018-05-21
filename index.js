@@ -3,7 +3,6 @@ const snekfetch = require("snekfetch"),
 var opt = JSON.parse(fs.readFileSync("./config.json", "utf8"));
 
 var sparkConnector = function() {
-  let opt;
   // Option check
   function sparkConnector(options) {
     if (!options.name)
