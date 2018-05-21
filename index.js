@@ -20,7 +20,7 @@ var sparkConnector = function() {
   };
   
   // Define random stuff
-  sparkConnector.prototype.onEvent = function(handler) {
+  sparkConnector.onEvent = function(handler) {
     return this.handler = handler
   };
   sparkConnector.prototype.startConversation = function() {
