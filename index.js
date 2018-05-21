@@ -35,7 +35,7 @@ var sparkConnector = function() {
   };
 
   // Listener
-  sparkConnector.prototype.listen = function(req, res){
+  sparkConnector.listen = function(req, res){
     var self = this.getOptions;
     if (self.options.debug) console.log("BotBuilder-CiscoSpark > Message received", req.body);
     res.send("ok");
