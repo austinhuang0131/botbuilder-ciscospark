@@ -1,6 +1,4 @@
-const snekfetch = require("snekfetch"),
-      fs = require("fs");
-var opt = JSON.parse(fs.readFileSync("./config.json", "utf8"));
+const snekfetch = require("snekfetch");
 
 var sparkConnector = function() {
   // Option check
