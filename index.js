@@ -1,4 +1,6 @@
-const snekfetch = require("snekfetch");
+const snekfetch = require("snekfetch"),
+      fs = require("fs");
+var opt = JSON.parse(fs.readFileSync("./config.json", "utf8"));
 
 var sparkConnector = function() {
   let opt;
@@ -10,7 +12,7 @@ var sparkConnector = function() {
       throw "BotBuilder-CiscoSpark > Token argument not defined.";
     if (!options.port)
       throw "BotBuilder-CiscoSpark > Webhook port argument not defined.";
-    this.options = options;
+    fs.writeFile("./config.json", JSON.stringify(options), "utf8");
     opt = options;
   }  
   // Define random stuff
