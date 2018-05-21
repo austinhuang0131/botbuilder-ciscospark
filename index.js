@@ -104,4 +104,4 @@ var sparkConnector = function() {
   return sparkConnector;
 };
 
-exports.connector = sparkConnector;
+exports = sparkConnector;
