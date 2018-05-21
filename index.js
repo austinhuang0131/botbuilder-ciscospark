@@ -12,7 +12,7 @@ var sparkConnector = function() {
       throw "BotBuilder-CiscoSpark > Webhook port argument not defined.";
     this.options = options;
   }  
-  sparkConnector.getOptions = function() {
+  function getOptions() {
     var that = this;
     var nested = function() {
       return that.options;
@@ -36,7 +36,7 @@ var sparkConnector = function() {
 
   // Listener
   sparkConnector.listen = function(req, res){
-    var self = this.getOptions();
+    var self = getOptions();
     if (self.debug) console.log("BotBuilder-CiscoSpark > Message received", req.body);
     res.send("ok");
     let message = req.body;
