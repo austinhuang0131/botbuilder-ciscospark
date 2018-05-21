@@ -12,7 +12,7 @@ var sparkConnector = (function() {
     this.options = options;
   }  
   // Define random stuff
-  sparkConnector.prototype.onEvent = function(handler) this.handler = handler;
+  sparkConnector.prototype.onEvent = function(handler) {this.handler = handler};
   sparkConnector.prototype.startConversation = function() {
     var self = this;
     if (self.options.debug)
