@@ -1,6 +1,6 @@
 const snekfetch = require("snekfetch");
 
-var sparkConnector = function(options) {
+var sparkConnector = (function(options) {
   if (!options.name)
     throw "BotBuilder-CiscoSpark > Name argument (username@sparkbot.io) not defined.";
   if (!options.token)
@@ -93,6 +93,6 @@ var sparkConnector = function(options) {
     });
   };
   return sparkConnector;
-};
+})();
 
 module.exports.connector = sparkConnector;
