@@ -1,6 +1,6 @@
 const snekfetch = require("snekfetch");
 
-var SparkConnector = (function(options) {
+var sparkConnector = (function(options) {
   // Option check
   function sparkConnector(options) {
     if (!options.name)
@@ -94,6 +94,7 @@ var SparkConnector = (function(options) {
       .then(r => {if (options.debug) console.log("BotBuilder-CiscoSpark > Here it goes... ", r.body);});
     });
   };
+  return sparkConnector;
 })();
 
-exports.connector = SparkConnector;
+exports.connector = sparkConnector;
