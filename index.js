@@ -12,20 +12,20 @@ var sparkConnector = (function() {
     this.options = options;
   }  
   // Define random stuff
-  sparkConnector.prototype.onEvent = handler => this.handler = handler;
-  sparkConnector.prototype.startConversation = () => {
+  sparkConnector.prototype.onEvent = function(handler) this.handler = handler;
+  sparkConnector.prototype.startConversation = function() {
     var self = this;
     if (self.options.debug)
       console.log("BotBuilder-CiscoSpark > startConversation", arguments);
   };
-  sparkConnector.prototype.onInvoke = () => {
+  sparkConnector.prototype.onInvoke = function() {
     var self = this;
     if (self.options.debug)
       console.log("BotBuilder-CiscoSpark > onInvoke", arguments);
   };
 
   // Listener
-  sparkConnector.prototype.listen = (req, res) => {
+  sparkConnector.prototype.listen = function(req, res){
     var self = this;
     console.log(self);
     if (self.options.debug) console.log("BotBuilder-CiscoSpark > Message received", req.body);
