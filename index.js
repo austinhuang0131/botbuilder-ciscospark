@@ -1,6 +1,6 @@
 const snekfetch = require("snekfetch");
 
-var sparkConnector = (function(options) {
+var sparkConnector = (function() {
   // Option check
   function sparkConnector(options) {
     if (!options.name)
