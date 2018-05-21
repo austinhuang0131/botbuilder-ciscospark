@@ -37,7 +37,7 @@ var sparkConnector = function() {
   // Listener
   sparkConnector.listen = function(req, res){
     var self = this.getOptions;
-    if (self.options.debug) console.log("BotBuilder-CiscoSpark > Message received", req.body);
+    if (self.debug) console.log("BotBuilder-CiscoSpark > Message received", req.body);
     res.send("ok");
     let message = req.body;
     if (message.data.personEmail !== self.options.name) snekfetch.get("https://api.ciscospark.com/v1/messages/"+message.data.id)
