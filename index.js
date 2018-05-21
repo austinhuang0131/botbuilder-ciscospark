@@ -1,23 +1,13 @@
 const snekfetch = require("snekfetch");
 
-var sparkConnector = function() {
-  // Option check
-  function sparkConnector(options) {
-    var self = this;
-    if (!options.name)
-      throw "BotBuilder-CiscoSpark > Name argument (username@sparkbot.io) not defined.";
-    if (!options.token)
-      throw "BotBuilder-CiscoSpark > Token argument not defined.";
-    if (!options.port)
-      throw "BotBuilder-CiscoSpark > Webhook port argument not defined.";
-    this.options = options;
-  }  
-  function getOptions() {
-    var that = this;
-    var nested = function() {
-      return that.options;
-    }
-  };
+var sparkConnector = function(options) {
+  if (!options.name)
+    throw "BotBuilder-CiscoSpark > Name argument (username@sparkbot.io) not defined.";
+  if (!options.token)
+    throw "BotBuilder-CiscoSpark > Token argument not defined.";
+  if (!options.port)
+    throw "BotBuilder-CiscoSpark > Webhook port argument not defined.";
+  this.options = options;
   
   // Define random stuff
   sparkConnector.onEvent = function(handler) {
