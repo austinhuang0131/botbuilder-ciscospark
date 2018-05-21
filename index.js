@@ -91,7 +91,7 @@ var sparkConnector = (function() {
       .then(r => {if (this.options.debug) console.log("BotBuilder-CiscoSpark > Here it goes... ", r.body);});
     });
   };
-  console.log(this);
+  console.log(this.constructor);
   return sparkConnector;
 })();
 
