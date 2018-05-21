@@ -23,8 +23,9 @@ function SparkConnector(options) {
   };
 
   // Listener
-  this.listen = (req, res) => {
+  this.hears = (req, res) => {
     if (req.path === options.path) {
+      console.log(req);
       if (options.debug) console.log("BotBuilder-CiscoSpark > Message received", req.body);
       res.send("ok");
       let message = req.body;
