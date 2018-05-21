@@ -11,57 +11,55 @@ function SparkConnector(options) {
       throw "BotBuilder-CiscoSpark > Path argument not defined.";
     if (!options.port)
       throw "BotBuilder-CiscoSpark > Webhook port argument not defined.";
-
-    // Define random stuff
-    this.onEvent = handler => this.handler = handler;
-    this.startConversation = () => {
-      if (options.debug)
-        console.log("BotBuilder-CiscoSpark > startConversation", arguments);
-    };
-    this.onInvoke = () => {
-      if (options.debug)
-        console.log("BotBuilder-CiscoSpark > onInvoke", arguments);
-    };
-
-    // Listener
-    this.listen = (req, res) => {
-      if (req.path === options.path) {
-        if (options.debug) console.log("BotBuilder-CiscoSpark > Message received", req.body);
-        res.send("ok");
-        let message = req.body;
-        if (message.data.personEmail !== options.name) snekfetch.get("https://api.ciscospark.com/v1/messages/"+message.data.id)
-        .set(`Authorization`, "Bearer " + options.token)
-        .then(r => {
-          var msg = {
-            timestamp: Date.parse(r.created),
-            source: "ciscospark",
-            entities: [],
-            text: !r.body.text ? null : r.body.text.replace(/^ /, ""),
-            attachments: !r.body.files ? [] : r.body.files.map(f => {
-              snekfetch.get(f)
-              .set(`Authorization`, "Bearer " + options.token)
-              .then(a => {return {content: a.body, contentType: require("buffer-type")(a.body).type}});
-            }),
-            address: {
-              bot: { name: options.name, id: "placeholder" },
-              user: { name: r.body.personEmail, id: r.body.personId },
-              channelId: "cisco",
-              channelName: "ciscospark",
-              msg: r,
-              conversation: {
-                id: r.body.roomId,
-                isGroup: r.body.roomType === "group" ? true : false
-              }
-            }
-          };
-          this.handler([msg]);
-          if (options.debug)
-            console.log("BotBuilder-CiscoSpark > Processed message", msg);
-        });
-      }
-    };
-    return this;
   }
+  // Define random stuff
+  sparkConnector.prototype.onEvent = handler => this.handler = handler;
+  sparkConnector.prototype.startConversation = () => {
+    if (options.debug)
+      console.log("BotBuilder-CiscoSpark > startConversation", arguments);
+  };
+  sparkConnector.prototype.onInvoke = () => {
+    if (options.debug)
+      console.log("BotBuilder-CiscoSpark > onInvoke", arguments);
+  };
+
+  // Listener
+  sparkConnector.prototype.listen = (req, res) => {
+    if (req.path === options.path) {
+      if (options.debug) console.log("BotBuilder-CiscoSpark > Message received", req.body);
+      res.send("ok");
+      let message = req.body;
+      if (message.data.personEmail !== options.name) snekfetch.get("https://api.ciscospark.com/v1/messages/"+message.data.id)
+      .set(`Authorization`, "Bearer " + options.token)
+      .then(r => {
+        var msg = {
+          timestamp: Date.parse(r.created),
+          source: "ciscospark",
+          entities: [],
+          text: !r.body.text ? null : r.body.text.replace(/^ /, ""),
+          attachments: !r.body.files ? [] : r.body.files.map(f => {
+            snekfetch.get(f)
+            .set(`Authorization`, "Bearer " + options.token)
+            .then(a => {return {content: a.body, contentType: require("buffer-type")(a.body).type}});
+          }),
+          address: {
+            bot: { name: options.name, id: "placeholder" },
+            user: { name: r.body.personEmail, id: r.body.personId },
+            channelId: "cisco",
+            channelName: "ciscospark",
+            msg: r,
+            conversation: {
+              id: r.body.roomId,
+              isGroup: r.body.roomType === "group" ? true : false
+            }
+          }
+        };
+        this.handler([msg]);
+        if (options.debug)
+          console.log("BotBuilder-CiscoSpark > Processed message", msg);
+      });
+    }
+  };
 
   sparkConnector.prototype.send = function(messages, cb) {
     if (messages.filter(m => m.source === "ciscospark").length !== messages.length)
