@@ -3,7 +3,6 @@ const snekfetch = require("snekfetch");
 var sparkConnector = (function() {
   // Option check
   function sparkConnector(options) {
-    console.log(options);
     if (!options.name)
       throw "BotBuilder-CiscoSpark > Name argument (username@sparkbot.io) not defined.";
     if (!options.token)
@@ -11,7 +10,6 @@ var sparkConnector = (function() {
     if (!options.port)
       throw "BotBuilder-CiscoSpark > Webhook port argument not defined.";
     this.options = options;
-    console.log(this.options);
   }  
   // Define random stuff
   sparkConnector.prototype.onEvent = handler => this.handler = handler;
@@ -29,6 +27,7 @@ var sparkConnector = (function() {
   // Listener
   sparkConnector.prototype.listen = (req, res) => {
     var self = this;
+    console.log(self);
     if (self.options.debug) console.log("BotBuilder-CiscoSpark > Message received", req.body);
     res.send("ok");
     let message = req.body;
