@@ -9,6 +9,7 @@ var sparkConnector = (function(options) {
       throw "BotBuilder-CiscoSpark > Token argument not defined.";
     if (!options.port)
       throw "BotBuilder-CiscoSpark > Webhook port argument not defined.";
+    this.options = options;
   }
   // Define random stuff
   sparkConnector.prototype.onEvent = handler => this.handler = handler;
