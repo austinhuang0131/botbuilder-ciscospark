@@ -13,10 +13,10 @@ var sparkConnector = function() {
     this.options = options;
   }  
   sparkConnector.prototype.getOptions = function() {
+    var that = this;
     var nested = function() {
-    return this.options;
+      return that.options;
     }
-    return nested.bind(this)();
   };
   
   // Define random stuff
@@ -36,7 +36,7 @@ var sparkConnector = function() {
 
   // Listener
   sparkConnector.listen = function(req, res){
-    var self = this.getOptions;
+    var self = this.getOptions();
     if (self.debug) console.log("BotBuilder-CiscoSpark > Message received", req.body);
     res.send("ok");
     let message = req.body;
