@@ -7,31 +7,28 @@ var sparkConnector = function(options) {
     throw "BotBuilder-CiscoSpark > Token argument not defined.";
   if (!options.port)
     throw "BotBuilder-CiscoSpark > Webhook port argument not defined.";
-  this.options = options;
   
   // Define random stuff
   sparkConnector.onEvent = function(handler) {
     return this.handler = handler
   };
   sparkConnector.prototype.startConversation = function() {
-    var self = this;
-    if (self.options.debug)
+    if (options.debug)
       console.log("BotBuilder-CiscoSpark > startConversation", arguments);
   };
   sparkConnector.prototype.onInvoke = function() {
-    var self = this;
-    if (self.options.debug)
+    if (options.debug)
       console.log("BotBuilder-CiscoSpark > onInvoke", arguments);
   };
 
   // Listener
   sparkConnector.listen = function(req, res){
-    var self = this;
-    if (self.options.debug) console.log("BotBuilder-CiscoSpark > Message received", req.body);
+    
+    if (options.debug) console.log("BotBuilder-CiscoSpark > Message received", req.body);
     res.send("ok");
     let message = req.body;
-    if (message.data.personEmail !== self.options.name) snekfetch.get("https://api.ciscospark.com/v1/messages/"+message.data.id)
-    .set(`Authorization`, "Bearer " + self.options.token)
+    if (message.data.personEmail !== options.name) snekfetch.get("https://api.ciscospark.com/v1/messages/"+message.data.id)
+    .set(`Authorization`, "Bearer " + options.token)
     .then(r => {
       var msg = {
         timestamp: Date.parse(r.created),
@@ -40,11 +37,11 @@ var sparkConnector = function(options) {
         text: !r.body.text ? null : r.body.text.replace(/^ /, ""),
         attachments: !r.body.files ? [] : r.body.files.map(f => {
           snekfetch.get(f)
-          .set(`Authorization`, "Bearer " + self.options.token)
+          .set(`Authorization`, "Bearer " + options.token)
           .then(a => {return {content: a.body, contentType: require("buffer-type")(a.body).type}});
         }),
         address: {
-          bot: { name: self.options.name, id: "placeholder" },
+          bot: { name: options.name, id: "placeholder" },
           user: { name: r.body.personEmail, id: r.body.personId },
           channelId: "cisco",
           channelName: "ciscospark",
@@ -55,20 +52,20 @@ var sparkConnector = function(options) {
           }
         }
       };
-      self.handler([msg]);
-      if (self.options.debug)
+      this.handler([msg]);
+      if (options.debug)
         console.log("BotBuilder-CiscoSpark > Processed message", msg);
     });
   };
 
   sparkConnector.prototype.send = function(messages, cb) {
-    var self = this;
+    
     if (messages.filter(m => m.source === "ciscospark").length !== messages.length)
       return Promise.reject(
         "BotBuilder-CiscoSpark > Ignoring messages for other platforms..." +
           JSON.stringify(messages)
       );
-    if (self.options.debug)
+    if (options.debug)
       console.log("BotBuilder-CiscoSpark > Preparing messages to go... " + messages);
     var body = [];
     messages.map(msg => {
@@ -85,14 +82,14 @@ var sparkConnector = function(options) {
       }
       else body.push({ roomId: msg.address.conversation.id, markdown: msg.text });
     });
-    if (self.options.debug)
+    if (options.debug)
       console.log("BotBuilder-CiscoSpark > Messages ready to go... " + JSON.stringify(body));
     if (body.length !== 0) body.forEach(b => {
       snekfetch.post("https://api.ciscospark.com/v1/messages")
       .set(`Authorization`, "Bearer " + this.options.token)
       .set(`Content-Type`, "application/json")
       .send(b)
-      .then(r => {if (self.options.debug) console.log("BotBuilder-CiscoSpark > Here it goes... ", r.body);});
+      .then(r => {if (options.debug) console.log("BotBuilder-CiscoSpark > Here it goes... ", r.body);});
     });
   };
   return sparkConnector;
