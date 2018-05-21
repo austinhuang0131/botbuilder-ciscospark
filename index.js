@@ -96,4 +96,4 @@ var SparkConnector = (function(options) {
   };
 })();
 
-exports.connector = SparkConnector.sparkConnector;
+exports.connector = SparkConnector;
