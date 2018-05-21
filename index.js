@@ -9,8 +9,6 @@ var sparkConnector = function() {
       throw "BotBuilder-CiscoSpark > Token argument not defined.";
     if (!options.port)
       throw "BotBuilder-CiscoSpark > Webhook port argument not defined.";
-    fs.writeFile("./config.json", JSON.stringify(options), "utf8");
-    opt = options;
   }  
   // Define random stuff
   sparkConnector.onEvent = function(handler) {
@@ -31,7 +29,7 @@ var sparkConnector = function() {
   sparkConnector.listen = function(req, res){
     var self = this;
     console.log(self);
-    if (opt.debug) console.log("BotBuilder-CiscoSpark > Message received", req.body);
+    if (self.options.debug) console.log("BotBuilder-CiscoSpark > Message received", req.body);
     res.send("ok");
     let message = req.body;
     if (message.data.personEmail !== self.options.name) snekfetch.get("https://api.ciscospark.com/v1/messages/"+message.data.id)
@@ -102,4 +100,4 @@ var sparkConnector = function() {
   return sparkConnector;
 };
 
-exports.connector = sparkConnector;
+module.exports.connector = sparkConnector;
