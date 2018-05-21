@@ -1,6 +1,6 @@
 const snekfetch = require("snekfetch");
 
-var sparkConnector = (function() {
+var sparkConnector = function() {
   // Option check
   function sparkConnector(options) {
     if (!options.name)
@@ -97,6 +97,6 @@ var sparkConnector = (function() {
     });
   };
   return sparkConnector;
-})();
+};
 
 exports.connector = sparkConnector;
